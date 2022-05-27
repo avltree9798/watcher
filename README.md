@@ -7,5 +7,4 @@ You need the Apple's Endpoint Security Entitlement from apple, you can make the 
 Alternatively, you can disable SIP temporarily.
 
 ## Release notes
-### v1.0
-Support for `EXEC`, `FORK`, and `EXIT` events.
+Check [releases page](https://github.com/avltree9798/watcher/releases) for complete release history and note.
