@@ -6,3 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#include <EndpointSecurity/EndpointSecurity.h>
+#include <bsm/libbsm.h>
+
+
