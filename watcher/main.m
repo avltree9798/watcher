@@ -8,39 +8,56 @@
 #import <Foundation/Foundation.h>
 #include <EndpointSecurity/EndpointSecurity.h>
 #include <bsm/libbsm.h>
+#include "esf_notify_handler.h"
+#include "esf_auth_handler.h"
 
 
-NSMutableArray* pids_to_monitor;
-
-static void handle_event(es_client_t *c, const es_message_t *msg){
-    pid_t parent_pid = audit_token_to_pid(msg->process->audit_token);
-    char* parent_process = msg->process->executable->path.data;
+static bool handle_event(es_client_t *c, const es_message_t *msg, NSMutableArray* pids_to_monitor){
+    const pid_t parent_pid = audit_token_to_pid(msg->process->audit_token);
+    const char* parent_process = msg->process->executable->path.data;
+    bool return_value = true;
     if([pids_to_monitor containsObject:[NSNumber numberWithInt:parent_pid]]){
         switch (msg->event_type) {
             case ES_EVENT_TYPE_NOTIFY_FORK:{
-                pid_t child_pid = audit_token_to_pid(msg->event.fork.child->audit_token);
-                printf("[+] FORK [%d] %s -> [%d] %s\n", parent_pid, parent_process, child_pid, msg->event.fork.child->executable->path.data);
-                [pids_to_monitor addObject:[NSNumber numberWithInt:child_pid]];
+                handle_notify_fork(msg, &pids_to_monitor, parent_pid, parent_process);
+                break;
             }
-            break;
-            
             case ES_EVENT_TYPE_NOTIFY_EXIT:{
-                NSNumber* pid = [NSNumber numberWithInt:parent_pid];
-                if([pids_to_monitor containsObject:pid]){
-                    printf("[+] EXIT [%d] %s.\n", parent_pid, parent_process);
-                    [pids_to_monitor removeObject:pid];
-                }
+                handle_notify_exit(msg, &pids_to_monitor, parent_pid, parent_process);
+                break;
             }
-            break;
-            
             case ES_EVENT_TYPE_NOTIFY_EXEC:{
-                    pid_t new_process_pid = audit_token_to_pid(msg->event.exec.target->audit_token);
-                    printf("[+] EXEC [%d] %s -> [%d] %s", parent_pid, parent_process, new_process_pid, msg->event.exec.target->executable->path.data);
-                    [pids_to_monitor addObject:[NSNumber numberWithInt:new_process_pid]];
+                handle_notify_exec(msg, &pids_to_monitor, parent_pid, parent_process);
+                break;
             }
-            break;
+            case ES_EVENT_TYPE_NOTIFY_RENAME:{
+                handle_notify_rename(parent_pid, parent_process, msg);
+                break;
+            }
+            case ES_EVENT_TYPE_NOTIFY_COPYFILE:{
+                handle_notify_copyfile(parent_pid, parent_process, msg);
+                break;
+            }
+            case ES_EVENT_TYPE_NOTIFY_CLONE:{
+                handle_notify_clone(parent_pid, parent_process, msg);
+                break;
+            }
+            case ES_EVENT_TYPE_NOTIFY_CREATE:{
+                handle_notify_create(parent_pid, parent_process, msg);
+                break;
+            }
+            case ES_EVENT_TYPE_NOTIFY_WRITE:{
+                handle_notify_write(parent_pid, parent_process, msg);
+                break;
+            }
+            case ES_EVENT_TYPE_NOTIFY_OPEN:{
+                handle_notify_open(parent_pid, parent_process, msg);
+                break;
+            }
         }
     }
+    
+    return return_value;
 }
 
 int main(int argc, const char * argv[]) {
@@ -48,9 +65,15 @@ int main(int argc, const char * argv[]) {
     es_event_type_t events[] = {
         ES_EVENT_TYPE_NOTIFY_EXEC,
         ES_EVENT_TYPE_NOTIFY_FORK,
-        ES_EVENT_TYPE_NOTIFY_EXIT
+        ES_EVENT_TYPE_NOTIFY_EXIT,
+        ES_EVENT_TYPE_NOTIFY_RENAME,
+        ES_EVENT_TYPE_NOTIFY_COPYFILE,
+        ES_EVENT_TYPE_NOTIFY_CLONE,
+        ES_EVENT_TYPE_NOTIFY_CREATE,
+        ES_EVENT_TYPE_NOTIFY_WRITE,
+        ES_EVENT_TYPE_NOTIFY_OPEN
     };
-    
+    NSMutableArray* pids_to_monitor;
     pids_to_monitor = [[NSMutableArray alloc] initWithCapacity:1];
     
     int pid;
@@ -59,7 +82,7 @@ int main(int argc, const char * argv[]) {
     fflush(stdin);
     
     es_new_client_result_t result = es_new_client(&client, ^(es_client_t *c, const es_message_t *msg) {
-        handle_event(c, msg);
+        handle_event(c, msg, pids_to_monitor);
     });
     if (result != ES_NEW_CLIENT_RESULT_SUCCESS) {
         printf("[-] Failed to create a new es client: %d\n", result);

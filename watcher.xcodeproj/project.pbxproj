@@ -10,6 +10,8 @@
 		443CDAF8283BF308001812EF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 443CDAF7283BF308001812EF /* main.m */; };
 		443CDB01283BF704001812EF /* libEndpointSecurity.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 443CDB00283BF704001812EF /* libEndpointSecurity.tbd */; };
 		443CDB03283BF70B001812EF /* libbsm.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 443CDB02283BF70B001812EF /* libbsm.tbd */; };
+		44CCC06D28416D1A00627A2E /* esf_notify_handler.m in Sources */ = {isa = PBXBuildFile; fileRef = 44CCC06C28416D1A00627A2E /* esf_notify_handler.m */; };
+		44CCC07028416F2A00627A2E /* esf_auth_handler.m in Sources */ = {isa = PBXBuildFile; fileRef = 44CCC06F28416F2A00627A2E /* esf_auth_handler.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -30,6 +32,10 @@
 		443CDAFE283BF32F001812EF /* watcher.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = watcher.entitlements; sourceTree = "<group>"; };
 		443CDB00283BF704001812EF /* libEndpointSecurity.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libEndpointSecurity.tbd; path = usr/lib/libEndpointSecurity.tbd; sourceTree = SDKROOT; };
 		443CDB02283BF70B001812EF /* libbsm.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbsm.tbd; path = usr/lib/libbsm.tbd; sourceTree = SDKROOT; };
+		44CCC06C28416D1A00627A2E /* esf_notify_handler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = esf_notify_handler.m; sourceTree = "<group>"; };
+		44CCC06E28416D2800627A2E /* esf_notify_handler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = esf_notify_handler.h; sourceTree = "<group>"; };
+		44CCC06F28416F2A00627A2E /* esf_auth_handler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = esf_auth_handler.m; sourceTree = "<group>"; };
+		44CCC07128416F3D00627A2E /* esf_auth_handler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = esf_auth_handler.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +73,10 @@
 			children = (
 				443CDAF7283BF308001812EF /* main.m */,
 				443CDAFE283BF32F001812EF /* watcher.entitlements */,
+				44CCC06C28416D1A00627A2E /* esf_notify_handler.m */,
+				44CCC06E28416D2800627A2E /* esf_notify_handler.h */,
+				44CCC06F28416F2A00627A2E /* esf_auth_handler.m */,
+				44CCC07128416F3D00627A2E /* esf_auth_handler.h */,
 			);
 			path = watcher;
 			sourceTree = "<group>";
@@ -137,6 +147,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				44CCC06D28416D1A00627A2E /* esf_notify_handler.m in Sources */,
+				44CCC07028416F2A00627A2E /* esf_auth_handler.m in Sources */,
 				443CDAF8283BF308001812EF /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
